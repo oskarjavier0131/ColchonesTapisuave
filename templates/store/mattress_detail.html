@@ -1,0 +1,198 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ mattress.name }} - Tapi Suave{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-lg-6">
+            <div class="product-images">
+                <img src="{{ mattress.main_image.url }}" alt="{{ mattress.name }}" class="product-detail-image w-100 mb-3">
+                
+                {% if mattress.images.all %}
+                <div class="row g-2">
+                    {% for image in mattress.images.all %}
+                    <div class="col-3">
+                        <img src="{{ image.image.url }}" alt="{{ image.alt_text }}" class="img-thumbnail gallery-image" style="cursor: pointer;">
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-lg-6">
+            <div class="product-detail-content">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'catalog' %}">Catálogo</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'category_detail' mattress.category.slug %}">{{ mattress.category.name }}</a></li>
+                        <li class="breadcrumb-item active">{{ mattress.name }}</li>
+                    </ol>
+                </nav>
+
+                <h1 class="display-5 fw-bold mb-3">{{ mattress.name }}</h1>
+                
+                <div class="product-badges mb-3">
+                    <span class="badge bg-primary me-2">{{ mattress.category.name }}</span>
+                    <span class="badge bg-secondary me-2">{{ mattress.get_size_display }}</span>
+                    <span class="badge bg-info me-2">{{ mattress.get_firmness_display }}</span>
+                    {% if mattress.is_featured %}
+                    <span class="badge bg-warning">Destacado</span>
+                    {% endif %}
+                </div>
+
+                <div class="product-price mb-4">
+                    <span class="display-6 text-primary fw-bold">${{ mattress.price }}</span>
+                    <div class="warranty-badge mt-2">
+                        <i class="fas fa-shield-alt text-success me-1"></i>
+                        <span class="text-success fw-bold">{{ mattress.warranty_years }} años de garantía</span>
+                    </div>
+                </div>
+
+                <p class="lead mb-4">{{ mattress.short_description }}</p>
+
+                <!-- Contact Buttons -->
+                <div class="contact-buttons mb-4">
+                    <button class="btn btn-success btn-lg me-3" onclick="contactWhatsApp()">
+                        <i class="fab fa-whatsapp me-2"></i>Consultar por WhatsApp
+                    </button>
+                    <button class="btn btn-outline-primary btn-lg" onclick="requestInfo()">
+                        <i class="fas fa-info-circle me-2"></i>Solicitar Información
+                    </button>
+                </div>
+
+                <!-- Product Specifications -->
+                <div class="product-specs">
+                    <h4 class="fw-bold mb-3">Especificaciones</h4>
+                    <div class="spec-item">
+                        <span class="fw-bold">Tamaño:</span>
+                        <span>{{ mattress.get_size_display }}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="fw-bold">Firmeza:</span>
+                        <span>{{ mattress.get_firmness_display }}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="fw-bold">Grosor:</span>
+                        <span>{{ mattress.thickness }} cm</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="fw-bold">Tecnología:</span>
+                        <span>{{ mattress.technology.name }}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="fw-bold">Garantía:</span>
+                        <span>{{ mattress.warranty_years }} años</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Description -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#description">Descripción</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#technology">Tecnología</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#benefits">Beneficios</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="description">
+                            <p>{{ mattress.description|linebreaks }}</p>
+                        </div>
+                        <div class="tab-pane fade" id="technology">
+                            <h5>{{ mattress.technology.name }}</h5>
+                            <p>{{ mattress.technology.description|linebreaks }}</p>
+                        </div>
+                        <div class="tab-pane fade" id="benefits">
+                            <h5>Beneficios de {{ mattress.technology.name }}</h5>
+                            <p>{{ mattress.technology.benefits|linebreaks }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_mattresses %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="fw-bold mb-4">Productos Relacionados</h3>
+            <div class="row g-4">
+                {% for related in related_mattresses %}
+                <div class="col-md-6 col-lg-3">
+                    <div class="product-card">
+                        <div class="product-image-container">
+                            <img src="{{ related.main_image.url }}" alt="{{ related.name }}" class="product-image">
+                        </div>
+                        <div class="product-content">
+                            <h6 class="fw-bold">{{ related.name }}</h6>
+                            <p class="text-muted small">{{ related.short_description|truncatewords:10 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-primary fw-bold">${{ related.price }}</span>
+                                <a href="{% url 'mattress_detail' related.slug %}" class="btn btn-sm btn-primary">Ver</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function contactWhatsApp() {
+    const message = `Hola, estoy interesado en el colchón ${document.querySelector('h1').textContent}. ¿Podrían darme más información?`;
+    const whatsappUrl = `https://wa.me/573001234567?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+function requestInfo() {
+    // Show WhatsApp widget with specific message
+    const whatsappWidget = document.getElementById('whatsapp-widget');
+    const chatMessages = document.getElementById('chat-messages');
+    const productName = document.querySelector('h1').textContent;
+    
+    whatsappWidget.style.display = 'block';
+    
+    // Add automated message about the product
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat-message bot-message';
+    messageDiv.textContent = `Vi que estás interesado en ${productName}. ¿Te gustaría saber más sobre sus características, disponibilidad o tiempos de entrega?`;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Gallery functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const galleryImages = document.querySelectorAll('.gallery-image');
+    const mainImage = document.querySelector('.product-detail-image');
+    
+    galleryImages.forEach(img => {
+        img.addEventListener('click', function() {
+            mainImage.src = this.src;
+            mainImage.alt = this.alt;
+        });
+    });
+});
+</script>
+{% endblock %}

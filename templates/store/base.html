@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Colchones TapiSuave - Colchones de Calidad{% endblock %}</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top elegant-nav">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+                <i class="fas fa-bed me-2"></i>Colchones TapiSuave
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'catalog' %}">Catálogo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'download_catalog' %}">
+                            <i class="fas fa-download me-1"></i>Descargar Catálogo
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link whatsapp-btn" href="#" id="whatsapp-btn">
+                            <i class="fab fa-whatsapp me-1"></i>WhatsApp
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5 class="fw-bold mb-3">Colchones TapiSuave</h5>
+                    <p>Especialistas en colchones de la más alta calidad para tu descanso perfecto.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="fw-bold mb-3">Enlaces Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'home' %}" class="text-light text-decoration-none">Inicio</a></li>
+                        <li><a href="{% url 'catalog' %}" class="text-light text-decoration-none">Catálogo</a></li>
+                        <li><a href="{% url 'download_catalog' %}" class="text-light text-decoration-none">Descargar Catálogo</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="fw-bold mb-3">Contacto</h5>
+                    <p><i class="fas fa-phone me-2"></i>+57 311 2474802</p>
+                    <p><i class="fas fa-envelope me-2"></i>info@tapisuave.com</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>Bogotá, Colombia</p>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p>&copy; 2024 Colchones TapiSuave. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Chat Widget -->
+    <div id="whatsapp-widget" class="whatsapp-widget">
+        <div class="whatsapp-header">
+            <i class="fab fa-whatsapp"></i>
+            <span>Asistente Virtual 24/7</span>
+            <button class="close-chat" id="close-chat">&times;</button>
+        </div>
+        <div class="whatsapp-body">
+            <div class="chat-message bot-message">
+                ¡Hola! Soy tu asistente virtual de Colchones TapiSuave. ¿En qué puedo ayudarte hoy?
+            </div>
+            <div id="chat-messages"></div>
+        </div>
+        <div class="whatsapp-footer">
+            <input type="text" id="chat-input" placeholder="Escribe tu mensaje...">
+            <button id="send-message"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

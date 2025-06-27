@@ -1,0 +1,164 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Catálogo - Tapi Suave{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Page Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">Nuestro Catálogo</h1>
+        <p class="lead text-muted">Encuentra el colchón perfecto para tu descanso</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-section">
+        <h4 class="filter-title">Filtrar por:</h4>
+        <div class="row">
+            <div class="col-md-4">
+                <h6>Categoría</h6>
+                <div class="mb-3">
+                    <button class="btn btn-outline-primary btn-filter active" data-filter="all">Todos</button>
+                    {% for category in categories %}
+                    <button class="btn btn-outline-primary btn-filter" data-filter="{{ category.slug }}">{{ category.name }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h6>Tamaño</h6>
+                <div class="mb-3">
+                    <select class="form-select" name="size" onchange="filterBySize(this.value)">
+                        <option value="">Todos los tamaños</option>
+                        <option value="individual" {% if selected_size == 'individual' %}selected{% endif %}>Individual</option>
+                        <option value="semidoble" {% if selected_size == 'semidoble' %}selected{% endif %}>Semidoble</option>
+                        <option value="doble" {% if selected_size == 'doble' %}selected{% endif %}>Doble</option>
+                        <option value="queen" {% if selected_size == 'queen' %}selected{% endif %}>Queen</option>
+                        <option value="king" {% if selected_size == 'king' %}selected{% endif %}>King</option>
+                        <option value="super_king" {% if selected_size == 'super_king' %}selected{% endif %}>Super King</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h6>Firmeza</h6>
+                <div class="mb-3">
+                    <select class="form-select" name="firmness" onchange="filterByFirmness(this.value)">
+                        <option value="">Todas las firmezas</option>
+                        <option value="suave" {% if selected_firmness == 'suave' %}selected{% endif %}>Suave</option>
+                        <option value="medio" {% if selected_firmness == 'medio' %}selected{% endif %}>Medio</option>
+                        <option value="firme" {% if selected_firmness == 'firme' %}selected{% endif %}>Firme</option>
+                        <option value="extra_firme" {% if selected_firmness == 'extra_firme' %}selected{% endif %}>Extra Firme</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="row g-4" id="products-grid">
+        {% for mattress in mattresses %}
+        <div class="col-md-6 col-lg-4 product-item" data-category="{{ mattress.category.slug }}" data-size="{{ mattress.size }}" data-firmness="{{ mattress.firmness }}">
+            <div class="product-card">
+                <div class="product-image-container">
+                    {% if mattress.main_image %}
+                    <img src="{{ mattress.main_image.url }}" alt="{{ mattress.name }}" class="product-image">
+                    {% else %}
+                    <div class="no-image-placeholder d-flex align-items-center justify-content-center">
+                        <i class="fas fa-image fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    {% if mattress.is_featured %}
+                    <div class="product-badge">Destacado</div>
+                    {% endif %}
+                </div>
+                <div class="product-content">
+                    <h5 class="fw-bold">{{ mattress.name }}</h5>
+                    <p class="text-muted">{{ mattress.short_description|truncatewords:15 }}</p>
+                    <div class="product-details mb-3">
+                        <span class="badge bg-secondary me-2">{{ mattress.get_size_display }}</span>
+                        <span class="badge bg-info me-2">{{ mattress.get_firmness_display }}</span>
+                        <span class="badge bg-success">{{ mattress.thickness }}cm</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="product-price">
+                            <span class="h5 text-primary fw-bold">${{ mattress.price }}</span>
+                        </div>
+                        <div class="warranty-info">
+                            <small class="text-muted">{{ mattress.warranty_years }} años garantía</small>
+                        </div>
+                    </div>
+                    <a href="{% url 'mattress_detail' mattress.slug %}" class="btn btn-primary w-100 mt-3">Ver Detalles</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                No se encontraron productos que coincidan con los filtros seleccionados.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Download Catalog CTA -->
+    <div class="text-center mt-5">
+        <div class="card bg-light">
+            <div class="card-body py-4">
+                <h4 class="fw-bold mb-3">¿Prefieres verlo en PDF?</h4>
+                <p class="text-muted mb-4">Descarga nuestro catálogo completo con todos los productos, especificaciones y precios.</p>
+                <a href="{% url 'download_catalog' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-download me-2"></i>Descargar Catálogo PDF
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterBySize(size) {
+    const url = new URL(window.location);
+    if (size) {
+        url.searchParams.set('size', size);
+    } else {
+        url.searchParams.delete('size');
+    }
+    window.location = url;
+}
+
+function filterByFirmness(firmness) {
+    const url = new URL(window.location);
+    if (firmness) {
+        url.searchParams.set('firmness', firmness);
+    } else {
+        url.searchParams.delete('firmness');
+    }
+    window.location = url;
+}
+
+// Live filtering for categories
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.btn-filter');
+    const productItems = document.querySelectorAll('.product-item');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filterValue = this.dataset.filter;
+            
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Filter products
+            productItems.forEach(item => {
+                if (filterValue === 'all' || item.dataset.category === filterValue) {
+                    item.style.display = 'block';
+                    item.classList.add('fade-in');
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
