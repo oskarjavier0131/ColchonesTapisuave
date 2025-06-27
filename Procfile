@@ -1,0 +1,1 @@
+web: gunicorn colchones_store.wsgi --log-file -
