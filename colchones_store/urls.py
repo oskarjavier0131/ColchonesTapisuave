@@ -18,11 +18,9 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .health import health_check
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('health/', health_check, name='health'),
     path('', include('store.urls')),
 ]
 
