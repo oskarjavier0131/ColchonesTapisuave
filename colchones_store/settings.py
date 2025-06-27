@@ -28,6 +28,9 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = ['*']
 
+# Railway specific settings
+CSRF_TRUSTED_ORIGINS = ['https://*.railway.app']
+
 
 # Application definition
 
